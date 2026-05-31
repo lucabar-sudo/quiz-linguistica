@@ -10,21 +10,36 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* TEMA 1: Mocha (Predefinito) */
         :root, [data-theme="mocha"] {
             --bg: #0f0f1a; --surface: #171728; --surface-hover: #212136; --accent: #7c6af5; --accent-light: #a78bfa;
             --green: #34d399; --red: #f87171; --yellow: #fbbf24; --text: #cdd6f4; --subtext: #a6adc8;
             --overlay-bg: rgba(15, 15, 26, 0.85); --header-border: rgba(255,255,255,0.05);
             --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
         }
+        /* TEMA 2: Chiaro */
         [data-theme="light"] {
             --bg: #f4f5f7; --surface: #ffffff; --surface-hover: #eef0f4; --accent: #5e4bd8; --accent-light: #7c6af5;
             --green: #10b981; --red: #ef4444; --yellow: #f59e0b; --text: #1e1e2e; --subtext: #6c7086;
             --overlay-bg: rgba(244, 245, 247, 0.85); --header-border: rgba(0,0,0,0.08);
         }
+        /* TEMA 3: OLED */
         [data-theme="oled"] {
             --bg: #000000; --surface: #111111; --surface-hover: #1c1c1c; --accent: #9d8bfa; --accent-light: #bbaafa;
             --green: #34d399; --red: #f87171; --yellow: #fbbf24; --text: #ffffff; --subtext: #aaaaaa;
             --overlay-bg: rgba(0, 0, 0, 0.9); --header-border: rgba(255,255,255,0.1);
+        }
+        /* TEMA 4: Tropicale */
+        [data-theme="tropical"] {
+            --bg: #022c22; --surface: #115e59; --surface-hover: #047857; --accent: #f97316; --accent-light: #fdba74; 
+            --green: #34d399; --red: #f87171; --yellow: #facc15; --text: #ecfdf5; --subtext: #99f6e4; 
+            --overlay-bg: rgba(2, 44, 34, 0.85); --header-border: rgba(255,255,255,0.1);
+        }
+        /* TEMA 5: Alpina */
+        [data-theme="alpine"] {
+            --bg: #0f172a; --surface: #1e293b; --surface-hover: #334155; --accent: #38bdf8; --accent-light: #7dd3fc; 
+            --green: #4ade80; --red: #f87171; --yellow: #fbbf24; --text: #f8fafc; --subtext: #94a3b8; 
+            --overlay-bg: rgba(15, 23, 42, 0.85); --header-border: rgba(255,255,255,0.1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -32,8 +47,16 @@
         ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 3px; }
         .container { max-width: 700px; margin: 0 auto; width: 100%; position: relative; flex-grow: 1; display: flex; flex-direction: column; }
         
-        header { position: sticky; top: 0; background: var(--bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 100; padding: calc(1rem + var(--safe-top)) 1rem 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--header-border); background-color: rgba(var(--bg), 0.7); }
-        [data-theme="mocha"] header, [data-theme="oled"] header { background: rgba(15, 15, 26, 0.7); } [data-theme="light"] header { background: rgba(255, 255, 255, 0.8); }
+        header { position: sticky; top: 0; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 100; padding: calc(1rem + var(--safe-top)) 1rem 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--header-border); }
+        .bottom-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 700px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 1rem 1rem calc(1rem + var(--safe-bottom)); display: flex; justify-content: center; border-top: 1px solid var(--header-border); z-index: 100; }
+        
+        /* Gestione Sfondi Trasparenti Temi */
+        [data-theme="mocha"] header, [data-theme="mocha"] .bottom-bar { background: rgba(15, 15, 26, 0.8); }
+        [data-theme="light"] header, [data-theme="light"] .bottom-bar { background: rgba(244, 245, 247, 0.9); }
+        [data-theme="oled"] header, [data-theme="oled"] .bottom-bar { background: rgba(0, 0, 0, 0.8); }
+        [data-theme="tropical"] header, [data-theme="tropical"] .bottom-bar { background: rgba(2, 44, 34, 0.8); }
+        [data-theme="alpine"] header, [data-theme="alpine"] .bottom-bar { background: rgba(15, 23, 42, 0.8); }
+
         .header-title { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; font-weight: 700; color: var(--subtext); letter-spacing: 0.5px; }
         .icon-btn { background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text); transition: transform 0.15s; padding: 0.5rem; } .icon-btn:active { transform: scale(0.85); } .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
         
@@ -50,8 +73,6 @@
         .key-badge { background: var(--bg); color: var(--subtext); font-family: 'JetBrains Mono', monospace; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; margin-right: 12px; }
         .feedback-text { text-align: center; font-weight: 600; font-size: 1.2rem; margin-top: 1rem; min-height: 2rem; } .text-green { color: var(--green); } .text-red { color: var(--red); }
 
-        .bottom-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 700px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 1rem 1rem calc(1rem + var(--safe-bottom)); display: flex; justify-content: center; border-top: 1px solid var(--header-border); z-index: 100; }
-        [data-theme="mocha"] .bottom-bar, [data-theme="oled"] .bottom-bar { background: rgba(15, 15, 26, 0.8); } [data-theme="light"] .bottom-bar { background: rgba(255, 255, 255, 0.8); }
         .btn-primary { background: var(--accent); color: #fff; border: none; padding: 1rem 2rem; border-radius: 12px; font-size: 1.1rem; font-weight: 600; font-family: inherit; cursor: pointer; width: 100%; transition: all 0.2s; text-align:center;} .btn-primary:active:not(:disabled) { transform: scale(0.96); } .btn-primary:disabled { background: var(--surface); color: var(--subtext); cursor: not-allowed; }
 
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--overlay-bg); z-index: 200; display: flex; justify-content: center; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; } .overlay.active { opacity: 1; pointer-events: all; }
@@ -127,9 +148,11 @@
                 <div class="setting-group">
                     <h4>Tema Visivo</h4>
                     <div class="presets" id="themePresets">
-                        <button class="preset-btn theme-btn" data-theme-id="mocha" onclick="setTheme('mocha')">Scuro (Mocha)</button>
+                        <button class="preset-btn theme-btn" data-theme-id="mocha" onclick="setTheme('mocha')">Scuro</button>
                         <button class="preset-btn theme-btn" data-theme-id="light" onclick="setTheme('light')">Chiaro</button>
-                        <button class="preset-btn theme-btn" data-theme-id="oled" onclick="setTheme('oled')">Nero (OLED)</button>
+                        <button class="preset-btn theme-btn" data-theme-id="oled" onclick="setTheme('oled')">OLED</button>
+                        <button class="preset-btn theme-btn" data-theme-id="tropical" onclick="setTheme('tropical')">Tropicale</button>
+                        <button class="preset-btn theme-btn" data-theme-id="alpine" onclick="setTheme('alpine')">Alpina</button>
                     </div>
                 </div>
                 <div class="setting-group">
@@ -159,7 +182,12 @@
                         <button class="stepper-btn" onclick="changeNum(-1)">−</button><div class="stepper-val" id="numQuestionsVal">10</div><button class="stepper-btn" onclick="changeNum(1)">+</button>
                     </div>
                     <div class="presets" id="numPresets">
-                        <button class="preset-btn" onclick="setNum(10)">10</button><button class="preset-btn" onclick="setNum(20)">20</button><button class="preset-btn" onclick="setNum(24)">24</button><button class="preset-btn" onclick="setNum(50)">50</button><button class="preset-btn" onclick="setNum(100)">100</button><button class="preset-btn" onclick="setNum(9999)">Tutte</button>
+                        <button class="preset-btn" onclick="setNum(10)">10</button>
+                        <button class="preset-btn" onclick="setNum(20)">20</button>
+                        <button class="preset-btn" onclick="setNum(24)">24</button>
+                        <button class="preset-btn" onclick="setNum(50)">50</button>
+                        <button class="preset-btn" onclick="setNum(100)">100</button>
+                        <button class="preset-btn" onclick="setNum(9999)">Tutte</button>
                     </div>
                 </div>
                 <div class="setting-group" id="orderToggleGroup">
@@ -199,7 +227,8 @@ const DB_KEY = 'quiz_latino_db_v4';
 const THEME_KEY = 'quiz_latino_theme_v4';
 
 let ALL_QUESTIONS = [];
-let appState = { mode: 'all', selectedLessons: new Set(), numQs: 20, isRandom: true };
+// MODIFICA 1: default numQs impostato a 9999 per indicare "Tutte" fin dall'inizio
+let appState = { mode: 'all', selectedLessons: new Set(), numQs: 9999, isRandom: true };
 let currentQuiz = [], currentIndex = 0, score = 0, hasAnswered = false, sessionHistory = []; 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -425,17 +454,12 @@ function showFinalScreen() {
     if (perc >= 80) { ring.classList.add('p-green'); emoji.textContent = '🏆'; label.textContent = 'Eccellente!'; } else if (perc >= 60) { ring.classList.add('p-yellow'); emoji.textContent = '👍'; label.textContent = 'Buon lavoro!'; } else { ring.classList.add('p-red'); emoji.textContent = '📚'; label.textContent = 'Da ripassare.'; }
 }
 
-// =====================================================================
-// EVENT LISTENER MANCANTE E GENERAZIONE STATISTICHE DINAMICHE AGGIUNTI
-// =====================================================================
 document.getElementById('btnSettings').onclick = () => { updateSettingsUI(); document.getElementById('settingsOverlay').classList.add('active'); };
 function closeSettings() { document.getElementById('settingsOverlay').classList.remove('active'); }
 
-// Pulsante STATISTICHE abilitato e collegato!
 document.getElementById('btnStats').onclick = openStats;
 
 function openStats() { 
-    // Genera l'HTML in tempo reale delle statistiche quando viene cliccato
     const sList = document.getElementById('statsList');
     sList.innerHTML = `<div style="text-align:center; margin-bottom:1.5rem"><div style="font-size:2rem; font-weight:bold">${score}/${currentQuiz.length}</div><div style="color:var(--subtext)">Risposte corrette finora</div></div>`;
     
@@ -480,12 +504,42 @@ function updateRefineStats() {
     else { list.sort((a,b) => b.count - a.count); let html = `Totale errori: <b>${tot}</b><br><br><span style="font-size:0.8rem; color:var(--subtext)">TOP SBAGLIATE:</span><ul style="font-size:0.85rem; margin-left:1.2rem; margin-top:0.5rem; color:var(--subtext)">`; list.slice(0,8).forEach(i => html += `<li>${i.q.substring(0, 30)}... <b style="color:var(--red)">(${i.count})</b></li>`); txt.innerHTML = html + "</ul>"; }
 }
 function resetErrors() { if (confirm("Cancellare le statistiche?")) { try{localStorage.removeItem(STORAGE_KEY);}catch(e){} updateRefineStats(); updatePoolBadges(); } }
+
+// MODIFICA 2: Gestione intelligente del parametro "Tutte" nel selettore Numerico
 function changeNum(delta) { setNum(appState.numQs + delta); }
-function setNum(val) { const size = getAvailablePool().length; let n = val; if (n < 1) n = 1; if (n > size) n = size; appState.numQs = n; document.getElementById('numQuestionsVal').textContent = (n === size && val === 9999) ? "Tutte" : n; updatePresets(); }
-function updatePoolBadges() { const size = getAvailablePool().length; document.getElementById('poolSizeBadge').textContent = `Disponibili: ${size}`; document.getElementById('btnApply').disabled = (size === 0); setNum(appState.numQs); }
-function updatePresets() { const size = getAvailablePool().length; document.querySelectorAll('.preset-btn:not(.theme-btn)').forEach(btn => { const valText = btn.textContent; const val = valText === 'Tutte' ? 9999 : parseInt(valText); btn.classList.remove('active'); btn.disabled = (valText !== 'Tutte' && val > size); if (appState.numQs === val || (val === 9999 && appState.numQs === size)) btn.classList.add('active'); }); }
-function updateSettingsUI() { setMode(appState.mode); document.getElementById('orderToggle').checked = !appState.isRandom; updatePoolBadges(); }
-function applySettings() { appState.isRandom = !document.getElementById('orderToggle').checked; closeSettings(); initQuiz(); }
+function setNum(val) { 
+    const size = getAvailablePool().length; 
+    let n = val; 
+    if (n < 1) n = 1; 
+    if (n >= size) n = size; 
+    appState.numQs = n; 
+    document.getElementById('numQuestionsVal').textContent = (n === size) ? "Tutte" : n; 
+    updatePresets(); 
+}
+function updatePoolBadges() { 
+    const size = getAvailablePool().length; 
+    document.getElementById('poolSizeBadge').textContent = `Disponibili: ${size}`; 
+    document.getElementById('btnApply').disabled = (size === 0); 
+    setNum(appState.numQs); 
+}
+function updatePresets() { 
+    const size = getAvailablePool().length; 
+    document.querySelectorAll('.preset-btn:not(.theme-btn)').forEach(btn => { 
+        const valText = btn.textContent; 
+        const val = valText === 'Tutte' ? size : parseInt(valText); 
+        btn.classList.remove('active'); 
+        btn.disabled = (valText !== 'Tutte' && val > size); 
+        
+        if (valText === 'Tutte' && appState.numQs === size) {
+            btn.classList.add('active');
+        } else if (valText !== 'Tutte' && appState.numQs === val && appState.numQs !== size) {
+            btn.classList.add('active');
+        }
+    }); 
+}
+
+function updateSettingsUI() { setMode(appState.mode); document.getElementById('orderToggle').checked = appState.isRandom; updatePoolBadges(); }
+function applySettings() { appState.isRandom = document.getElementById('orderToggle').checked; closeSettings(); initQuiz(); }
 
 document.addEventListener('keydown', (e) => {
     if (document.getElementById('settingsOverlay').classList.contains('active') || document.getElementById('statsOverlay').classList.contains('active')) return;
