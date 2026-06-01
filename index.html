@@ -17,7 +17,7 @@
         [data-theme="alpine"] { --bg: #0f172a; --surface: #1e293b; --surface-hover: #334155; --accent: #38bdf8; --accent-light: #7dd3fc; --green: #4ade80; --red: #f87171; --yellow: #fbbf24; --text: #f8fafc; --subtext: #94a3b8; --overlay-bg: rgba(15, 23, 42, 0.85); --header-border: rgba(255,255,255,0.1); }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Sora', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.5; overflow-x: hidden; display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
+        body { font-family: 'Sora', sans-serif; background-color: var(--bg); color: var(--text); line-height: 1.5; overflow-x: hidden; overflow-y: scroll; display: flex; flex-direction: column; min-height: 100vh; transition: background-color 0.3s, color 0.3s; }
         ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--surface-hover); border-radius: 3px; }
         .container { max-width: 700px; margin: 0 auto; width: 100%; position: relative; flex-grow: 1; display: flex; flex-direction: column; }
         
@@ -40,7 +40,14 @@
         .option-btn { display: flex; align-items: center; width: 100%; background: var(--surface); border: 2px solid transparent; color: var(--text); padding: 1rem 1.2rem; margin-bottom: 0.8rem; border-radius: 12px; font-size: 1rem; font-family: inherit; cursor: pointer; text-align: left; transition: all 0.2s; }
         .option-btn:hover:not(:disabled) { background: var(--surface-hover); } .option-btn:active:not(:disabled) { transform: scale(0.98); } .option-btn.selected { border-color: var(--accent); } .option-btn.correct { background: rgba(52, 211, 153, 0.1); border-color: var(--green); color: var(--green); } .option-btn.wrong { background: rgba(248, 113, 113, 0.1); border-color: var(--red); color: var(--red); } .option-btn:disabled { cursor: not-allowed; opacity: 0.6; }
         .key-badge { background: var(--bg); color: var(--subtext); font-family: 'JetBrains Mono', monospace; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; margin-right: 12px; }
-        .feedback-text { text-align: center; font-weight: 600; font-size: 1.2rem; margin-top: 1rem; min-height: 2rem; } .text-green { color: var(--green); } .text-red { color: var(--red); }
+        
+        .feedback-area { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 1rem; min-height: 4rem; gap: 0.8rem; }
+        .feedback-text { font-weight: 600; font-size: 1.2rem; } .text-green { color: var(--green); } .text-red { color: var(--red); }
+        
+        .bookmark-btn { background: transparent; border: 2px solid var(--subtext); color: var(--subtext); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;}
+        .bookmark-btn:hover { border-color: var(--text); color: var(--text); }
+        .bookmark-btn.saved { border-color: var(--yellow); color: var(--yellow); background: rgba(250, 204, 21, 0.1); }
+        .bookmark-btn:active { transform: scale(0.95); }
 
         .btn-primary { background: var(--accent); color: #fff; border: none; padding: 1rem 2rem; border-radius: 12px; font-size: 1.1rem; font-weight: 600; font-family: inherit; cursor: pointer; width: 100%; transition: all 0.2s; text-align:center;} .btn-primary:active:not(:disabled) { transform: scale(0.96); } .btn-primary:disabled { background: var(--surface); color: var(--subtext); cursor: not-allowed; }
 
@@ -60,61 +67,16 @@
 
         .final-stats { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding-top: 2rem;} .percentage-ring { margin: 2rem auto; font-family: 'JetBrains Mono', monospace; font-size: 4rem; font-weight: 700; animation: popIn 0.6s ease; } .p-green { color: var(--green); text-shadow: 0 0 20px rgba(52,211,153,0.3); } .p-yellow { color: var(--yellow); text-shadow: 0 0 20px rgba(251,191,36,0.3); } .p-red { color: var(--red); text-shadow: 0 0 20px rgba(248,113,113,0.3); } .final-emoji { font-size: 3.5rem; margin-bottom: 0.5rem; } .final-label { font-size: 1.2rem; font-weight: 600; color: var(--subtext); margin-bottom: 2rem; } .final-buttons { display: flex; gap: 1rem; width: 100%; }
 
-        /* NUOVI STILI PER LA DASHBOARD STATISTICHE CSS PURA */
-        .stats-tab-bar { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: none; }
-        .stats-tab-bar::-webkit-scrollbar { display: none; }
-        .filter-chip { background: var(--surface); color: var(--text); border: none; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-family: inherit; font-weight: 600; white-space: nowrap; cursor: pointer; transition: 0.2s; }
-        .filter-chip.active { background: var(--accent); color: #fff; }
-        
-        .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1.5rem; }
-        .kpi-card { background: var(--surface); padding: 1rem 0.5rem; text-align: center; border-radius: 12px; }
-        .kpi-val { font-size: 1.4rem; font-weight: 700; font-family: 'JetBrains Mono'; color: var(--text); }
-        .kpi-label { font-size: 0.7rem; color: var(--subtext); text-transform: uppercase; margin-top: 0.2rem; letter-spacing: 0.5px;}
-        
-        .chart-container { background: var(--surface); padding: 1.2rem; border-radius: 12px; margin-bottom: 1.5rem; }
-        .chart-title { font-size: 0.9rem; margin-bottom: 1rem; font-weight: 600; color: var(--subtext); text-transform: uppercase; letter-spacing: 1px;}
-        
-        /* Bar Chart Verticale (Trend) */
-        .bar-chart-v { display: flex; align-items: flex-end; justify-content: space-between; gap: 4px; height: 140px; padding-top: 20px; }
-        .bar-v-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; position: relative; max-width: 30px;}
-        .bar-v { width: 100%; border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .bar-v.bad { background: var(--red); opacity: 0.8;}
-        .bar-v.ok { background: var(--yellow); opacity: 0.8;}
-        .bar-v.good { background: var(--green); opacity: 0.8;}
-        .bar-label { font-size: 0.65rem; color: var(--subtext); margin-top: 6px; font-family: 'JetBrains Mono';}
-        .bar-tooltip { position: absolute; top: -24px; font-size: 0.7rem; font-weight:bold; font-family:'JetBrains Mono'; background: var(--bg); padding: 2px 6px; border-radius: 6px; opacity: 0; pointer-events: none; transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.3);}
-        .bar-v-wrapper:hover .bar-tooltip, .bar-v-wrapper:active .bar-tooltip { opacity: 1; top: -30px; }
-
-        /* Bar Chart Orizzontale (Debolezze) */
-        .bar-chart-h { display: flex; flex-direction: column; gap: 10px; }
-        .bar-h-row { display: flex; align-items: center; gap: 12px; font-size: 0.85rem;}
-        .bar-h-label { width: 45px; font-weight: 700; font-family: 'JetBrains Mono'; color: var(--subtext);}
-        .bar-h-track { flex: 1; background: var(--bg); height: 10px; border-radius: 5px; overflow: hidden; }
-        .bar-h-fill { height: 100%; background: linear-gradient(90deg, var(--red), #ff9b9b); border-radius: 5px; transition: width 0.6s ease; }
-        .bar-h-val { width: 30px; text-align: right; color: var(--text); font-weight: 600; font-family: 'JetBrains Mono';}
-
-        /* Lista Cronologia Espandibile */
-        .history-list { display: flex; flex-direction: column; gap: 0.8rem; }
-        .hist-card { background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid transparent; transition: 0.2s;}
-        .hist-card.expanded { border-color: var(--accent); }
-        .hist-header { padding: 1.2rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s;}
-        .hist-header:hover { background: var(--surface-hover); }
-        .hist-info { display: flex; flex-direction: column; gap: 4px; }
-        .hist-date { font-weight: 600; font-size: 0.95rem; color: var(--text);}
-        .hist-meta { font-size: 0.75rem; color: var(--subtext);}
-        .hist-score { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;}
-        .hist-score span { font-size: 0.8rem; font-family: 'Sora'; opacity: 0.7;}
-        
-        .hist-body { padding: 0 1.2rem; max-height: 0; opacity: 0; overflow: hidden; transition: all 0.3s ease; }
-        .hist-card.expanded .hist-body { padding: 0 1.2rem 1.2rem; max-height: 5000px; opacity: 1; border-top: 1px solid var(--header-border); margin-top: 0.5rem; padding-top: 1rem; }
-        
-        .hist-err-item { margin-bottom: 1.2rem; font-size: 0.85rem; background: var(--bg); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--red);}
-        .hist-err-item:last-child { margin-bottom: 0; }
-        .hist-err-q { color: var(--text); margin-bottom: 0.6rem; font-weight: 600; line-height: 1.4;}
-        .h-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px;}
-        .h-label { color: var(--subtext); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;}
-
+        .stats-tab-bar { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: none; } .stats-tab-bar::-webkit-scrollbar { display: none; } .filter-chip { background: var(--surface); color: var(--text); border: none; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-family: inherit; font-weight: 600; white-space: nowrap; cursor: pointer; transition: 0.2s; } .filter-chip.active { background: var(--accent); color: #fff; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1.5rem; } .kpi-card { background: var(--surface); padding: 1rem 0.5rem; text-align: center; border-radius: 12px; } .kpi-val { font-size: 1.4rem; font-weight: 700; font-family: 'JetBrains Mono'; color: var(--text); } .kpi-label { font-size: 0.7rem; color: var(--subtext); text-transform: uppercase; margin-top: 0.2rem; letter-spacing: 0.5px;}
+        .chart-container { background: var(--surface); padding: 1.2rem; border-radius: 12px; margin-bottom: 1.5rem; } .chart-title { font-size: 0.9rem; margin-bottom: 1rem; font-weight: 600; color: var(--subtext); text-transform: uppercase; letter-spacing: 1px;}
+        .bar-chart-v { display: flex; align-items: flex-end; justify-content: space-between; gap: 4px; height: 140px; padding-top: 20px; } .bar-v-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; position: relative; max-width: 30px;} .bar-v { width: 100%; border-radius: 4px 4px 0 0; min-height: 4px; transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1); } .bar-v.bad { background: var(--red); opacity: 0.8;} .bar-v.ok { background: var(--yellow); opacity: 0.8;} .bar-v.good { background: var(--green); opacity: 0.8;} .bar-label { font-size: 0.65rem; color: var(--subtext); margin-top: 6px; font-family: 'JetBrains Mono';} .bar-tooltip { position: absolute; top: -24px; font-size: 0.7rem; font-weight:bold; font-family:'JetBrains Mono'; background: var(--bg); padding: 2px 6px; border-radius: 6px; opacity: 0; pointer-events: none; transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.3);} .bar-v-wrapper:hover .bar-tooltip, .bar-v-wrapper:active .bar-tooltip { opacity: 1; top: -30px; }
+        .bar-chart-h { display: flex; flex-direction: column; gap: 10px; } .bar-h-row { display: flex; align-items: center; gap: 12px; font-size: 0.85rem;} .bar-h-label { width: 45px; font-weight: 700; font-family: 'JetBrains Mono'; color: var(--subtext);} .bar-h-track { flex: 1; background: var(--bg); height: 10px; border-radius: 5px; overflow: hidden; } .bar-h-fill { height: 100%; background: linear-gradient(90deg, var(--red), #ff9b9b); border-radius: 5px; transition: width 0.6s ease; } .bar-h-val { width: 30px; text-align: right; color: var(--text); font-weight: 600; font-family: 'JetBrains Mono';}
+        .history-list { display: flex; flex-direction: column; gap: 0.8rem; } .hist-card { background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid transparent; transition: 0.2s;} .hist-card.expanded { border-color: var(--accent); } .hist-header { padding: 1.2rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s;} .hist-header:hover { background: var(--surface-hover); } .hist-info { display: flex; flex-direction: column; gap: 4px; } .hist-date { font-weight: 600; font-size: 0.95rem; color: var(--text);} .hist-meta { font-size: 0.75rem; color: var(--subtext);} .hist-score { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;} .hist-score span { font-size: 0.8rem; font-family: 'Sora'; opacity: 0.7;} .hist-body { padding: 0 1.2rem; max-height: 0; opacity: 0; overflow: hidden; transition: all 0.3s ease; } .hist-card.expanded .hist-body { padding: 0 1.2rem 1.2rem; max-height: 5000px; opacity: 1; border-top: 1px solid var(--header-border); margin-top: 0.5rem; padding-top: 1rem; } .hist-err-item { margin-bottom: 1.2rem; font-size: 0.85rem; background: var(--bg); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--red);} .hist-err-item:last-child { margin-bottom: 0; } .hist-err-q { color: var(--text); margin-bottom: 0.6rem; font-weight: 600; line-height: 1.4;} .h-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px;} .h-label { color: var(--subtext); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;}
         .hidden { display: none !important; }
+
+        .confetti { position: fixed; top: -10px; z-index: 9999; width: 10px; height: 10px; animation: fall linear forwards; border-radius: 2px;}
+        @keyframes fall { 0% { transform: translateY(-10vh) rotate(0deg) scale(1); opacity: 1; } 100% { transform: translateY(110vh) rotate(720deg) scale(0.5); opacity: 0.5; } }
     </style>
 </head>
 <body>
@@ -136,8 +98,7 @@
             <h2 style="margin-bottom:1rem">Carica il tuo Database</h2>
             <p style="color:var(--subtext); margin-bottom: 2rem; font-size:0.95rem; padding: 0 1rem;">
                 Carica il tuo file <b style="color:var(--accent)">database.html</b>.<br><br>
-                L'algoritmo integrato riconoscerà in modo infallibile tutte le 685 domande ignorando quelle aperte.<br><br>
-                <i>Supporta risposte racchiuse in * o che iniziano con *.</i>
+                L'algoritmo integrato riconoscerà in modo infallibile tutte le 685 domande ignorando quelle aperte.
             </p>
             <label class="btn-primary" style="cursor:pointer; display:inline-block; width:auto">
                 Seleziona File HTML
@@ -148,7 +109,11 @@
         <div id="quizScreen" class="hidden">
             <div class="question-card slide-in" id="qCard"><h2 id="questionText">...</h2></div>
             <div class="options-container slide-in" id="optionsContainer" style="animation-delay: 0.1s"></div>
-            <div id="feedbackText" class="feedback-text slide-in" style="animation-delay: 0.2s"></div>
+            
+            <div class="feedback-area slide-in" id="feedbackArea" style="animation-delay: 0.2s">
+                <div id="feedbackText" class="feedback-text"></div>
+                <button id="btnBookmark" class="bookmark-btn hidden" onclick="toggleBookmark()">☆ Salva Segnalibro</button>
+            </div>
         </div>
 
         <div id="finalScreen" class="hidden final-stats">
@@ -164,6 +129,7 @@
 
     <div class="bottom-bar hidden" id="bottomBar"><button id="btnNext" class="btn-primary" disabled>Avanti →</button></div>
 
+    <!-- Impostazioni -->
     <div id="settingsOverlay" class="overlay">
         <div class="overlay-content">
             <div class="overlay-header"><h3>Impostazioni</h3><button class="icon-btn" onclick="closeSettings()">✕</button></div>
@@ -184,6 +150,7 @@
                         <button class="mode-btn" data-mode="all" onclick="setMode('all')">Tutte le lezioni <span>Pesca dal pool completo</span></button>
                         <button class="mode-btn" data-mode="select" onclick="setMode('select')">Scegli lezioni <span>Seleziona lezioni specifiche</span></button>
                         <button class="mode-btn" data-mode="refine" onclick="setMode('refine')">Perfezionamento <span>Ripeti le domande più sbagliate</span></button>
+                        <button class="mode-btn" data-mode="bookmarks" onclick="setMode('bookmarks')">Solo Segnalibri <span>Ripassa solo le domande salvate (⭐)</span></button>
                     </div>
                 </div>
                 <div id="lessonSelector" class="setting-group hidden">
@@ -194,6 +161,9 @@
                 <div id="refineStats" class="setting-group hidden">
                     <h4>Gestione Dati & Statistiche</h4>
                     <div style="background:var(--surface); padding:1rem; border-radius:8px; margin-bottom:0.8rem;" id="errorStatsText"></div>
+                    <div style="display:flex; gap:0.5rem; margin-bottom:0.5rem">
+                        <button style="flex:1; background:transparent; border:1px solid var(--accent); color:var(--accent); padding:0.5rem; border-radius:6px; cursor:pointer;" onclick="openBookmarks()">Gestisci Segnalibri</button>
+                    </div>
                     <div style="display:flex; gap:0.5rem">
                         <button style="flex:1; background:transparent; border:1px solid var(--red); color:var(--red); padding:0.5rem; border-radius:6px; cursor:pointer;" onclick="resetErrors()">Azzera Statistiche</button>
                         <button style="flex:1; background:transparent; border:1px solid var(--yellow); color:var(--yellow); padding:0.5rem; border-radius:6px; cursor:pointer;" onclick="resetDatabase()">Cambia Database</button>
@@ -205,7 +175,7 @@
                         <button class="stepper-btn" onclick="changeNum(-1)">−</button><div class="stepper-val" id="numQuestionsVal">10</div><button class="stepper-btn" onclick="changeNum(1)">+</button>
                     </div>
                     <div class="presets" id="numPresets">
-                        <button class="preset-btn" onclick="setNum(10)">10</button><button class="preset-btn" onclick="setNum(20)">20</button><button class="preset-btn" onclick="setNum(24)">24</button><button class="preset-btn" onclick="setNum(50)">50</button><button class="preset-btn" onclick="setNum(100)">100</button><button class="preset-btn" onclick="setNum(9999)">Tutte</button>
+                        <button class="preset-btn" onclick="setNum(10)">10</button><button class="preset-btn" onclick="setNum(20)">20</button><button class="preset-btn" onclick="setNum(50)">50</button><button class="preset-btn" onclick="setNum(100)">100</button><button class="preset-btn" onclick="setNum(9999)">Tutte</button>
                     </div>
                 </div>
                 <div class="setting-group" id="orderToggleGroup">
@@ -220,11 +190,11 @@
         </div>
     </div>
 
+    <!-- Nuova Dashboard Statistiche -->
     <div id="statsOverlay" class="overlay">
         <div class="overlay-content">
             <div class="overlay-header"><h3>Le tue Statistiche</h3><button class="icon-btn" onclick="closeStats()">✕</button></div>
             <div class="overlay-body">
-                
                 <div class="stats-tab-bar" id="statsFilters">
                     <button class="filter-chip active" onclick="renderDashboard(5)">Ultimi 5</button>
                     <button class="filter-chip" onclick="renderDashboard(10)">Ultimi 10</button>
@@ -232,32 +202,29 @@
                     <button class="filter-chip" onclick="renderDashboard(50)">Ultimi 50</button>
                     <button class="filter-chip" onclick="renderDashboard(9999)">Tutti</button>
                 </div>
-                
                 <div class="kpi-grid">
                     <div class="kpi-card"><div class="kpi-val" id="kAvg">--%</div><div class="kpi-label">Media</div></div>
                     <div class="kpi-card"><div class="kpi-val" id="kTests">--</div><div class="kpi-label">Test Fatti</div></div>
                     <div class="kpi-card"><div class="kpi-val" id="kQs">--</div><div class="kpi-label">Domande</div></div>
                 </div>
-
-                <div class="chart-container">
-                    <div class="chart-title">Trend Punteggi (%)</div>
-                    <div class="bar-chart-v" id="trendChart">
-                        </div>
-                </div>
-
-                <div class="chart-container">
-                    <div class="chart-title">Le tue debolezze (Errori)</div>
-                    <div class="bar-chart-h" id="weakChart">
-                        </div>
-                </div>
-
+                <div class="chart-container"><div class="chart-title">Trend Punteggi (%)</div><div class="bar-chart-v" id="trendChart"></div></div>
+                <div class="chart-container"><div class="chart-title">Le tue debolezze (Errori)</div><div class="bar-chart-h" id="weakChart"></div></div>
                 <h4 style="margin: 2rem 0 1rem; font-size:1rem; color:var(--subtext); text-transform:uppercase; letter-spacing:1px;">Cronologia Test</h4>
-                <div class="history-list" id="historyAccordion">
-                    </div>
-
+                <div class="history-list" id="historyAccordion"></div>
             </div>
         </div>
     </div>
+
+    <!-- Nuova Schermata Gestione Segnalibri -->
+    <div id="bookmarksOverlay" class="overlay">
+        <div class="overlay-content">
+            <div class="overlay-header"><h3>I Tuoi Segnalibri</h3><button class="icon-btn" onclick="closeBookmarks()">✕</button></div>
+            <div class="overlay-body" id="bookmarksList">
+                <!-- Generato via JS -->
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
@@ -269,13 +236,11 @@ window.onerror = function(msg, url, line) {
     return false;
 };
 
-// ==============================================================
-// CHIAVI DI MEMORIA
-// ==============================================================
 const STORAGE_KEY = 'quiz_latino_errors_v4';
 const DB_KEY = 'quiz_latino_db_v4';
 const THEME_KEY = 'quiz_latino_theme_v4';
-const HISTORY_KEY = 'quiz_latino_history_v4'; // Nuovo archivio test storici
+const HISTORY_KEY = 'quiz_latino_history_v4'; 
+const BOOKMARKS_KEY = 'quiz_latino_bookmarks_v4';
 
 let ALL_QUESTIONS = [];
 let appState = { mode: 'all', selectedLessons: new Set(), numQs: 9999, isRandom: true, testSaved: false };
@@ -292,13 +257,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setTheme(savedTheme);
 
     if (storedDb) {
-        try {
-            ALL_QUESTIONS = JSON.parse(storedDb);
-            startApp();
-        } catch(e) { showUploadScreen(); }
-    } else {
-        showUploadScreen();
-    }
+        try { ALL_QUESTIONS = JSON.parse(storedDb); startApp(); } catch(e) { showUploadScreen(); }
+    } else { showUploadScreen(); }
 });
 
 function showUploadScreen() {
@@ -314,9 +274,6 @@ function setTheme(themeName) {
     if(activeBtn) activeBtn.classList.add('active');
 }
 
-/* =========================================================================
-   PARSER HTML POTENZIATO
-========================================================================= */
 document.getElementById('htmlInput').addEventListener('change', (e) => {
     const file = e.target.files[0];
     if(!file) return;
@@ -413,6 +370,11 @@ function shuffle(array) {
 }
 function getErrorDict() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e){ return {}; } }
 function recordError(qText) { let errs = getErrorDict(); errs[qText] = (errs[qText] || 0) + 1; try { localStorage.setItem(STORAGE_KEY, JSON.stringify(errs)); } catch(e){} }
+
+function getBookmarks() { try { return JSON.parse(localStorage.getItem(BOOKMARKS_KEY) || '[]'); } catch(e){ return []; } }
+function saveBookmarks(arr) { try { localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(arr)); } catch(e){} }
+function isBookmarked(qText) { return getBookmarks().includes(qText); }
+
 function getUniqueLessons() { return Array.from(new Set(ALL_QUESTIONS.map(q => q.lezione))).sort((a,b)=>a-b); }
 function getAvailablePool() {
     if (appState.mode === 'all') return ALL_QUESTIONS;
@@ -420,6 +382,10 @@ function getAvailablePool() {
     if (appState.mode === 'refine') {
         const errors = getErrorDict();
         return ALL_QUESTIONS.filter(q => errors[q.question] > 0).sort((a,b) => errors[b.question] - errors[a.question]);
+    }
+    if (appState.mode === 'bookmarks') {
+        const bks = getBookmarks();
+        return ALL_QUESTIONS.filter(q => bks.includes(q.question));
     }
     return [];
 }
@@ -429,27 +395,37 @@ function initQuiz() {
     document.getElementById('quizScreen').classList.remove('hidden');
     document.getElementById('bottomBar').classList.remove('hidden');
     appState.testSaved = false;
+    document.querySelectorAll('.confetti').forEach(c => c.remove());
+
     let pool = getAvailablePool();
     if(pool.length === 0) { alert("Nessuna domanda disponibile per la selezione attuale."); openSettings(); return; }
-    if (appState.isRandom && appState.mode !== 'refine') pool = shuffle(pool);
+    if (appState.isRandom && appState.mode !== 'refine' && appState.mode !== 'bookmarks') pool = shuffle(pool);
     currentQuiz = pool.slice(0, Math.min(appState.numQs, pool.length));
     currentIndex = 0; score = 0; sessionHistory = [];
     renderQuestion();
 }
 
 function renderQuestion() {
-    hasAnswered = false; const q = currentQuiz[currentIndex]; const isRefine = appState.mode === 'refine';
-    const errorCount = isRefine ? getErrorDict()[q.question] : null;
+    hasAnswered = false; const q = currentQuiz[currentIndex];
+    
     let headerTxt = `DOMANDA ${currentIndex + 1}/${currentQuiz.length} · LEZ. ${q.lezione}`;
-    if (isRefine) headerTxt += ` · <span style="color:var(--red)">×${errorCount} errori</span>`;
+    if (appState.mode === 'refine') {
+        const errorCount = getErrorDict()[q.question];
+        headerTxt += ` · <span style="color:var(--red)">×${errorCount} errori</span>`;
+    }
+    if (appState.mode === 'bookmarks') headerTxt += ` · ⭐`;
     document.getElementById('headerTitle').innerHTML = headerTxt;
     document.getElementById('progressBar').style.width = `${(currentIndex / currentQuiz.length) * 100}%`;
+    
     const qCard = document.getElementById('qCard'), optsContainer = document.getElementById('optionsContainer'), fText = document.getElementById('feedbackText'), btnNext = document.getElementById('btnNext');
     qCard.classList.remove('slide-in'); optsContainer.classList.remove('slide-in'); void qCard.offsetWidth;
     qCard.classList.add('slide-in'); optsContainer.classList.add('slide-in');
-    document.getElementById('questionText').textContent = q.question; fText.textContent = ''; fText.className = 'feedback-text';
-    btnNext.disabled = true; btnNext.textContent = (currentIndex === currentQuiz.length - 1) ? "Risultati →" : "Avanti →";
     
+    document.getElementById('questionText').textContent = q.question; 
+    fText.textContent = ''; fText.className = 'feedback-text';
+    btnNext.disabled = true; btnNext.textContent = (currentIndex === currentQuiz.length - 1) ? "Risultati →" : "Avanti →";
+    document.getElementById('btnBookmark').classList.add('hidden');
+
     let ops = shuffle([...q.options]);
     optsContainer.innerHTML = '';
     ops.forEach((opt, idx) => {
@@ -463,197 +439,198 @@ function handleAnswer(btn, selectedOpt, allOpts) {
     if (hasAnswered) return; hasAnswered = true; const q = currentQuiz[currentIndex];
     const isCorrect = selectedOpt.is_correct; const correctOpt = allOpts.find(o => o.is_correct);
     const btns = document.querySelectorAll('.option-btn'); btns.forEach(b => b.disabled = true);
+    
     if (isCorrect) {
         btn.classList.add('correct'); document.getElementById('feedbackText').textContent = '✅ Corretto!'; document.getElementById('feedbackText').classList.add('text-green'); score++;
     } else {
         btn.classList.add('wrong'); btns[allOpts.findIndex(o => o.is_correct)].classList.add('correct');
         document.getElementById('feedbackText').textContent = '❌ Sbagliato!'; document.getElementById('feedbackText').classList.add('text-red'); recordError(q.question);
     }
-    // Salviamo anche la lezione per le statistiche avanzate
+    
+    updateBookmarkBtnUI(q.question);
+    document.getElementById('btnBookmark').classList.remove('hidden');
+
     sessionHistory.push({ question: q.question, lezione: q.lezione, given: selectedOpt.text, correct: correctOpt.text, isCorrect: isCorrect });
     document.getElementById('btnNext').disabled = false; document.getElementById('progressBar').style.width = `${((currentIndex + 1) / currentQuiz.length) * 100}%`;
 }
 
+function updateBookmarkBtnUI(qText) {
+    const btn = document.getElementById('btnBookmark');
+    if (isBookmarked(qText)) { btn.innerHTML = '⭐ Salvato nei Segnalibri'; btn.classList.add('saved'); } 
+    else { btn.innerHTML = '☆ Salva Segnalibro'; btn.classList.remove('saved'); }
+}
+
+function toggleBookmark() {
+    const qText = currentQuiz[currentIndex].question;
+    let bks = getBookmarks();
+    if (bks.includes(qText)) bks = bks.filter(b => b !== qText); else bks.push(qText);
+    saveBookmarks(bks); updateBookmarkBtnUI(qText);
+}
+
 document.getElementById('btnNext').onclick = () => { if (currentIndex < currentQuiz.length - 1) { currentIndex++; renderQuestion(); } else { showFinalScreen(); } };
+
+function fireConfetti() {
+    const colors = ['#7c6af5', '#34d399', '#facc15', '#f87171', '#38bdf8'];
+    for(let i=0; i<80; i++) {
+        let conf = document.createElement('div');
+        conf.className = 'confetti'; conf.style.left = Math.random() * 100 + 'vw';
+        conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        conf.style.animationDuration = (Math.random() * 3 + 2) + 's'; conf.style.animationDelay = (Math.random() * 0.5) + 's';
+        document.body.appendChild(conf); setTimeout(() => conf.remove(), 5000); 
+    }
+}
 
 function showFinalScreen() {
     document.getElementById('quizScreen').classList.add('hidden'); document.getElementById('bottomBar').classList.add('hidden'); document.getElementById('finalScreen').classList.remove('hidden');
     const perc = Math.round((score / currentQuiz.length) * 100), ring = document.getElementById('fPercent'), emoji = document.getElementById('fEmoji'), label = document.getElementById('fLabel');
     ring.className = 'percentage-ring'; ring.textContent = `${perc}%`;
-    if (perc >= 80) { ring.classList.add('p-green'); emoji.textContent = '🏆'; label.textContent = 'Eccellente!'; } else if (perc >= 60) { ring.classList.add('p-yellow'); emoji.textContent = '👍'; label.textContent = 'Buon lavoro!'; } else { ring.classList.add('p-red'); emoji.textContent = '📚'; label.textContent = 'Da ripassare.'; }
-    
+    if (perc === 100) { ring.classList.add('p-green'); emoji.textContent = '🌟'; label.textContent = 'Perfezione Assoluta!'; fireConfetti(); } 
+    else if (perc >= 80) { ring.classList.add('p-green'); emoji.textContent = '🏆'; label.textContent = 'Eccellente!'; } 
+    else if (perc >= 60) { ring.classList.add('p-yellow'); emoji.textContent = '👍'; label.textContent = 'Buon lavoro!'; } 
+    else { ring.classList.add('p-red'); emoji.textContent = '📚'; label.textContent = 'Da ripassare.'; }
     saveTestToHistory();
 }
 
-// ==============================================================
-// GESTIONE CRONOLOGIA E DASHBOARD STATISTICHE
-// ==============================================================
 function saveTestToHistory() {
-    if (appState.testSaved) return;
-    appState.testSaved = true;
-    
-    let tests = [];
-    try { tests = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch(e){}
-    
-    let errorsOnly = sessionHistory.filter(h => !h.isCorrect);
-    let now = new Date();
-    // Formatta la data come "26 Ott, 15:30"
+    if (appState.testSaved) return; appState.testSaved = true;
+    let tests = []; try { tests = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch(e){}
+    let errorsOnly = sessionHistory.filter(h => !h.isCorrect); let now = new Date();
     let dateStr = now.toLocaleDateString('it-IT', {day:'numeric', month:'short'}) + ', ' + now.toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit'});
-    
-    // Nome della modalità usata
     let modeName = "Tutte le lezioni";
     if (appState.mode === 'select') modeName = "Lezioni miste (" + appState.selectedLessons.size + ")";
     if (appState.mode === 'refine') modeName = "Perfezionamento errori";
-
-    tests.push({
-        id: now.getTime(),
-        date: dateStr,
-        mode: modeName,
-        score: score,
-        total: currentQuiz.length,
-        errors: errorsOnly
-    });
-    
+    if (appState.mode === 'bookmarks') modeName = "Ripasso Segnalibri";
+    tests.push({ id: now.getTime(), date: dateStr, mode: modeName, score: score, total: currentQuiz.length, errors: errorsOnly });
     try { localStorage.setItem(HISTORY_KEY, JSON.stringify(tests)); } catch(e){}
 }
 
-document.getElementById('btnStats').onclick = () => {
-    document.getElementById('statsOverlay').classList.add('active');
-    renderDashboard(5); // Default: ultimi 5
-};
-
+document.getElementById('btnStats').onclick = () => { document.getElementById('statsOverlay').classList.add('active'); renderDashboard(5); };
 function closeStats() { document.getElementById('statsOverlay').classList.remove('active'); }
 
 function renderDashboard(limit) {
-    // 1. Aggiorna interfaccia pulsanti filtro
     document.querySelectorAll('.filter-chip').forEach(btn => {
-        btn.classList.remove('active');
-        const btnVal = btn.textContent.includes('Tutti') ? 9999 : parseInt(btn.textContent.replace(/\D/g, ''));
+        btn.classList.remove('active'); const btnVal = btn.textContent.includes('Tutti') ? 9999 : parseInt(btn.textContent.replace(/\D/g, ''));
         if (btnVal === limit) btn.classList.add('active');
     });
-
-    // 2. Recupera dati
-    let allTests = [];
-    try { allTests = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch(e){}
-
+    let allTests = []; try { allTests = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch(e){}
     if (allTests.length === 0) {
-        document.getElementById('kAvg').textContent = "--%";
-        document.getElementById('kTests').textContent = "0";
-        document.getElementById('kQs').textContent = "0";
+        document.getElementById('kAvg').textContent = "--%"; document.getElementById('kTests').textContent = "0"; document.getElementById('kQs').textContent = "0";
         document.getElementById('trendChart').innerHTML = "<div style='color:var(--subtext); width:100%; text-align:center;'>Nessun test completato.</div>";
-        document.getElementById('weakChart').innerHTML = "";
-        document.getElementById('historyAccordion').innerHTML = "";
-        return;
+        document.getElementById('weakChart').innerHTML = ""; document.getElementById('historyAccordion').innerHTML = ""; return;
     }
-
-    // Filtra per gli ultimi N test
-    let tests = allTests.slice(-limit);
-
-    // 3. Calcola KPI
-    let tQs = 0, tScore = 0;
-    tests.forEach(t => { tQs += t.total; tScore += t.score; });
+    let tests = allTests.slice(-limit); let tQs = 0, tScore = 0; tests.forEach(t => { tQs += t.total; tScore += t.score; });
     let avg = Math.round((tScore / tQs) * 100) || 0;
-    
-    document.getElementById('kAvg').textContent = avg + '%';
-    document.getElementById('kTests').textContent = tests.length;
-    document.getElementById('kQs').textContent = tQs;
-
-    // 4. Grafico Trend Line (Barre Verticali CSS)
+    document.getElementById('kAvg').textContent = avg + '%'; document.getElementById('kTests').textContent = tests.length; document.getElementById('kQs').textContent = tQs;
     let trendHTML = '';
     tests.forEach((t, idx) => {
-        let p = Math.round((t.score / t.total) * 100);
-        let colorCls = p >= 80 ? 'good' : (p >= 60 ? 'ok' : 'bad');
-        trendHTML += `
-            <div class="bar-v-wrapper">
-                <div class="bar-tooltip">${p}%</div>
-                <div class="bar-v ${colorCls}" style="height: ${p}%"></div>
-                <div class="bar-label">${idx+1}</div>
-            </div>`;
+        let p = Math.round((t.score / t.total) * 100); let colorCls = p >= 80 ? 'good' : (p >= 60 ? 'ok' : 'bad');
+        trendHTML += `<div class="bar-v-wrapper"><div class="bar-tooltip">${p}%</div><div class="bar-v ${colorCls}" style="height: ${p}%"></div><div class="bar-label">${idx+1}</div></div>`;
     });
     document.getElementById('trendChart').innerHTML = trendHTML;
-
-    // 5. Grafico Punti Deboli (Barre Orizzontali CSS)
-    let lessonErrors = {};
-    tests.forEach(t => {
-        t.errors.forEach(err => { lessonErrors[err.lezione] = (lessonErrors[err.lezione] || 0) + 1; });
-    });
-    
-    let weakArr = Object.keys(lessonErrors).map(k => ({ lezione: k, count: lessonErrors[k] }));
-    weakArr.sort((a,b) => b.count - a.count);
-    let topWeak = weakArr.slice(0, 5); // Prende le peggiori 5
-    
-    if (topWeak.length === 0) {
-        document.getElementById('weakChart').innerHTML = "<div style='color:var(--green); font-weight:600;'>Nessun errore registrato in questi test! 🎉</div>";
+    let lessonErrors = {}; tests.forEach(t => { t.errors.forEach(err => { lessonErrors[err.lezione] = (lessonErrors[err.lezione] || 0) + 1; }); });
+    let weakArr = Object.keys(lessonErrors).map(k => ({ lezione: k, count: lessonErrors[k] })); weakArr.sort((a,b) => b.count - a.count); let topWeak = weakArr.slice(0, 5); 
+    if (topWeak.length === 0) { document.getElementById('weakChart').innerHTML = "<div style='color:var(--green); font-weight:600;'>Nessun errore registrato in questi test! 🎉</div>";
     } else {
-        let maxErr = topWeak[0].count;
-        let weakHTML = '';
-        topWeak.forEach(w => {
-            let pct = (w.count / maxErr) * 100;
-            weakHTML += `
-                <div class="bar-h-row">
-                    <div class="bar-h-label">L${w.lezione}</div>
-                    <div class="bar-h-track"><div class="bar-h-fill" style="width:${pct}%"></div></div>
-                    <div class="bar-h-val">${w.count}</div>
-                </div>`;
-        });
+        let maxErr = topWeak[0].count; let weakHTML = '';
+        topWeak.forEach(w => { let pct = (w.count / maxErr) * 100; weakHTML += `<div class="bar-h-row"><div class="bar-h-label">L${w.lezione}</div><div class="bar-h-track"><div class="bar-h-fill" style="width:${pct}%"></div></div><div class="bar-h-val">${w.count}</div></div>`; });
         document.getElementById('weakChart').innerHTML = weakHTML;
     }
-
-    // 6. Genera Lista Cronologia Espandibile (dal più recente al più vecchio)
-    let histHTML = '';
-    let revTests = [...tests].reverse();
-    
+    let histHTML = ''; let revTests = [...tests].reverse();
     revTests.forEach((t, idx) => {
-        let p = Math.round((t.score / t.total) * 100);
-        let color = p >= 80 ? 'var(--green)' : (p >= 60 ? 'var(--yellow)' : 'var(--red)');
-        
-        // Costruisci il corpo con l'elenco errori
+        let p = Math.round((t.score / t.total) * 100); let color = p >= 80 ? 'var(--green)' : (p >= 60 ? 'var(--yellow)' : 'var(--red)');
         let errsHTML = '';
-        if (t.errors.length === 0) {
-            errsHTML = `<div style="color:var(--green); font-weight:600;">Percorso netto perfetto! 🏆</div>`;
-        } else {
-            t.errors.forEach((err, i) => {
-                errsHTML += `
-                    <div class="hist-err-item">
-                        <div class="hist-err-q"><b>${i+1}.</b> ${err.question}</div>
-                        <div class="h-row"><span class="h-label">Tua:</span><span style="color:var(--red)">${err.given}</span></div>
-                        <div class="h-row"><span class="h-label">Corretta:</span><span style="color:var(--green)">${err.correct}</span></div>
-                    </div>`;
-            });
+        if (t.errors.length === 0) { errsHTML = `<div style="color:var(--green); font-weight:600;">Percorso netto perfetto! 🏆</div>`; } else {
+            t.errors.forEach((err, i) => { errsHTML += `<div class="hist-err-item"><div class="hist-err-q"><b>${i+1}.</b> ${err.question}</div><div class="h-row"><span class="h-label">Tua:</span><span style="color:var(--red)">${err.given}</span></div><div class="h-row"><span class="h-label">Corretta:</span><span style="color:var(--green)">${err.correct}</span></div></div>`; });
         }
-
-        // Il primo elemento in alto (il più recente) si apre automaticamente
         let isExpanded = (idx === 0) ? 'expanded' : '';
-
-        histHTML += `
-            <div class="hist-card ${isExpanded}">
-                <div class="hist-header" onclick="this.parentElement.classList.toggle('expanded')">
-                    <div class="hist-info">
-                        <div class="hist-date">${t.date}</div>
-                        <div class="hist-meta">${t.mode}</div>
-                    </div>
-                    <div class="hist-score" style="color:${color}">${t.score}/${t.total} <span>(${p}%)</span></div>
-                </div>
-                <div class="hist-body">
-                    ${errsHTML}
-                </div>
-            </div>`;
+        histHTML += `<div class="hist-card ${isExpanded}"><div class="hist-header" onclick="this.parentElement.classList.toggle('expanded')"><div class="hist-info"><div class="hist-date">${t.date}</div><div class="hist-meta">${t.mode}</div></div><div class="hist-score" style="color:${color}">${t.score}/${t.total} <span>(${p}%)</span></div></div><div class="hist-body">${errsHTML}</div></div>`;
     });
-    
     document.getElementById('historyAccordion').innerHTML = histHTML;
 }
 
-/* =========================================================================
-   IMPOSTAZIONI E COMPONENTI DI SISTEMA
-========================================================================= */
+// ==============================================================
+// GESTIONE SEGNALIBRI OVERLAY
+// ==============================================================
+function openBookmarks() {
+    document.getElementById('bookmarksOverlay').classList.add('active');
+    renderBookmarksList();
+}
+
+function closeBookmarks() {
+    document.getElementById('bookmarksOverlay').classList.remove('active');
+}
+
+function renderBookmarksList() {
+    const bks = getBookmarks();
+    const list = document.getElementById('bookmarksList');
+    list.innerHTML = '';
+    
+    if (bks.length === 0) {
+        list.innerHTML = `<div style="text-align:center; color:var(--subtext); margin-top:2rem;">Nessun segnalibro salvato.</div>`;
+        return;
+    }
+    
+    bks.forEach((bk, idx) => {
+        let qObj = ALL_QUESTIONS.find(q => q.question === bk);
+        let correctText = "Risposta non trovata";
+        let lezione = "?";
+        if (qObj) {
+            let cOpt = qObj.options.find(o => o.is_correct);
+            if(cOpt) correctText = cOpt.text;
+            lezione = qObj.lezione;
+        }
+        
+        let div = document.createElement('div');
+        div.className = 'history-item';
+        div.style.display = 'flex'; div.style.flexDirection = 'column'; div.style.gap = '0.5rem';
+        
+        let headerRow = document.createElement('div');
+        headerRow.style.display = 'flex'; headerRow.style.justifyContent = 'space-between'; headerRow.style.alignItems = 'flex-start'; headerRow.style.gap = '1rem';
+        
+        let title = document.createElement('h4');
+        title.style.margin = '0'; title.style.fontSize = '0.95rem';
+        title.textContent = `${idx + 1}. ${bk}`;
+        
+        let btn = document.createElement('button');
+        btn.textContent = '✕ Elimina';
+        btn.style.background = 'rgba(248, 113, 113, 0.15)'; btn.style.color = 'var(--red)'; btn.style.border = '1px solid var(--red)';
+        btn.style.borderRadius = '6px'; btn.style.padding = '0.3rem 0.6rem'; btn.style.cursor = 'pointer'; btn.style.fontWeight = 'bold'; btn.style.fontSize = '0.75rem'; btn.style.flexShrink = '0';
+        btn.onclick = () => removeBookmarkFromList(bk);
+        
+        headerRow.appendChild(title); headerRow.appendChild(btn);
+        
+        let ansRow = document.createElement('div');
+        ansRow.className = 'h-row'; ansRow.style.marginTop = '0.5rem';
+        ansRow.innerHTML = `<span class="h-label">LEZIONE ${lezione} - RISPOSTA CORRETTA:</span><span style="color: var(--green); font-weight:600;">${correctText}</span>`;
+        
+        div.appendChild(headerRow); div.appendChild(ansRow); list.appendChild(div);
+    });
+}
+
+function removeBookmarkFromList(qText) {
+    let bks = getBookmarks();
+    bks = bks.filter(b => b !== qText);
+    saveBookmarks(bks);
+    renderBookmarksList();
+    if (appState.mode === 'bookmarks') {
+        updateRefineSettingsStats('bookmarks');
+        updatePoolBadges();
+    }
+}
+
 document.getElementById('btnSettings').onclick = () => { updateSettingsUI(); document.getElementById('settingsOverlay').classList.add('active'); };
 function closeSettings() { document.getElementById('settingsOverlay').classList.remove('active'); }
 
 function setMode(mode) {
     appState.mode = mode; document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active')); document.querySelector(`.mode-btn[data-mode="${mode}"]`).classList.add('active');
     document.getElementById('lessonSelector').classList.add('hidden'); document.getElementById('refineStats').classList.add('hidden'); document.getElementById('orderToggleGroup').classList.remove('hidden');
+    
     if (mode === 'select') document.getElementById('lessonSelector').classList.remove('hidden');
-    else if (mode === 'refine') { document.getElementById('refineStats').classList.remove('hidden'); document.getElementById('orderToggleGroup').classList.add('hidden'); updateRefineSettingsStats(); }
+    else if (mode === 'refine' || mode === 'bookmarks') { 
+        document.getElementById('refineStats').classList.remove('hidden'); 
+        document.getElementById('orderToggleGroup').classList.add('hidden'); 
+        updateRefineSettingsStats(mode); 
+    }
     updatePoolBadges();
 }
 
@@ -669,16 +646,22 @@ function buildLessonGrid() {
 }
 function selectAllLessons(selAll) { const lessons = getUniqueLessons(); const items = document.querySelectorAll('.lesson-item'); if (selAll) { lessons.forEach(l => appState.selectedLessons.add(l)); items.forEach(i => i.classList.add('active')); } else { appState.selectedLessons.clear(); items.forEach(i => i.classList.remove('active')); } updatePoolBadges(); }
 
-function updateRefineSettingsStats() {
-    const errs = getErrorDict(), txt = document.getElementById('errorStatsText'); let tot = 0;
-    for (let k in errs) { tot += errs[k]; }
-    if (tot === 0) txt.innerHTML = "<span style='color:var(--subtext)'>Nessun errore registrato in memoria.</span>";
-    else { txt.innerHTML = `L'algoritmo pescherà tra i tuoi <b>${tot}</b> errori registrati.`; }
+function updateRefineSettingsStats(mode) {
+    const txt = document.getElementById('errorStatsText');
+    if (mode === 'refine') {
+        const errs = getErrorDict(); let tot = 0; for (let k in errs) tot += errs[k];
+        txt.innerHTML = tot === 0 ? "<span style='color:var(--subtext)'>Nessun errore in memoria.</span>" : `Pescherà tra <b>${tot}</b> errori registrati.`;
+    } else if (mode === 'bookmarks') {
+        const bks = getBookmarks();
+        txt.innerHTML = bks.length === 0 ? "<span style='color:var(--subtext)'>Nessun segnalibro salvato.</span>" : `Pescherà tra le tue <b>${bks.length}</b> domande salvate.`;
+    }
 }
+
 function resetErrors() { 
-    if (confirm("Attenzione: questo cancellerà TUTTA la tua Cronologia dei test e le Statistiche. Sei sicuro?")) { 
+    if (confirm("Attenzione: questo cancellerà TUTTA la tua Cronologia dei test e le Statistiche degli errori. I segnalibri verranno mantenuti. Sei sicuro?")) { 
         try{localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(HISTORY_KEY);}catch(e){} 
-        updateRefineSettingsStats(); updatePoolBadges(); closeStats();
+        if(appState.mode === 'refine') updateRefineSettingsStats('refine'); 
+        updatePoolBadges(); closeStats();
     } 
 }
 
@@ -706,7 +689,7 @@ function updateSettingsUI() { setMode(appState.mode); document.getElementById('o
 function applySettings() { appState.isRandom = document.getElementById('orderToggle').checked; closeSettings(); initQuiz(); }
 
 document.addEventListener('keydown', (e) => {
-    if (document.getElementById('settingsOverlay').classList.contains('active') || document.getElementById('statsOverlay').classList.contains('active')) return;
+    if (document.getElementById('settingsOverlay').classList.contains('active') || document.getElementById('statsOverlay').classList.contains('active') || document.getElementById('bookmarksOverlay').classList.contains('active')) return;
     if (e.key >= '1' && e.key <= '4') { const btns = document.querySelectorAll('.option-btn'); if (btns[parseInt(e.key) - 1] && !btns[parseInt(e.key) - 1].disabled) btns[parseInt(e.key) - 1].click(); }
     if (e.key === 'Enter') { const btnNext = document.getElementById('btnNext'); if (!btnNext.disabled && !document.getElementById('bottomBar').classList.contains('hidden')) btnNext.click(); }
 });
