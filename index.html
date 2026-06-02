@@ -129,7 +129,6 @@
 
     <div class="bottom-bar hidden" id="bottomBar"><button id="btnNext" class="btn-primary" disabled>Avanti →</button></div>
 
-    <!-- Impostazioni -->
     <div id="settingsOverlay" class="overlay">
         <div class="overlay-content">
             <div class="overlay-header"><h3>Impostazioni</h3><button class="icon-btn" onclick="closeSettings()">✕</button></div>
@@ -190,7 +189,6 @@
         </div>
     </div>
 
-    <!-- Nuova Dashboard Statistiche -->
     <div id="statsOverlay" class="overlay">
         <div class="overlay-content">
             <div class="overlay-header"><h3>Le tue Statistiche</h3><button class="icon-btn" onclick="closeStats()">✕</button></div>
@@ -215,27 +213,35 @@
         </div>
     </div>
 
-    <!-- Nuova Schermata Gestione Segnalibri -->
     <div id="bookmarksOverlay" class="overlay">
         <div class="overlay-content">
             <div class="overlay-header"><h3>I Tuoi Segnalibri</h3><button class="icon-btn" onclick="closeBookmarks()">✕</button></div>
-            <div class="overlay-body" id="bookmarksList">
-                <!-- Generato via JS -->
-            </div>
+            <div class="overlay-body" id="bookmarksList"></div>
         </div>
     </div>
 
 </div>
 
 <script>
+// ==============================================================
+// 1. GESTIONE ERRORI AVANZATA (DISMISSIBILE)
+// ==============================================================
 window.onerror = function(msg, url, line) {
     document.getElementById('headerTitle').innerHTML = "ERRORE";
     const errScreen = document.getElementById('uploadScreen');
-    errScreen.innerHTML = `<div class="final-emoji">⚠️</div><h2 style="margin-bottom:1rem">Errore</h2><p style="color:var(--red); font-size:0.9rem; padding:1rem; background:var(--surface); border-radius:8px;">${msg}</p>`;
+    errScreen.innerHTML = `
+        <div class="final-emoji">⚠️</div>
+        <h2 style="margin-bottom:1rem">Errore Rilevato</h2>
+        <p style="color:var(--red); font-size:0.9rem; padding:1rem; background:var(--surface); border-radius:8px; line-height:1.5;">${msg}</p>
+        <button class="btn-primary" style="margin-top:1.5rem;" onclick="document.getElementById('uploadScreen').classList.add('hidden')">Chiudi e Ignora</button>
+    `;
     errScreen.classList.remove('hidden');
     return false;
 };
 
+// ==============================================================
+// 2. VARIABILI GLOBALI E CHIAVI DI MEMORIA
+// ==============================================================
 const STORAGE_KEY = 'quiz_latino_errors_v4';
 const DB_KEY = 'quiz_latino_db_v4';
 const THEME_KEY = 'quiz_latino_theme_v4';
@@ -246,6 +252,9 @@ let ALL_QUESTIONS = [];
 let appState = { mode: 'all', selectedLessons: new Set(), numQs: 9999, isRandom: true, testSaved: false };
 let currentQuiz = [], currentIndex = 0, score = 0, hasAnswered = false, sessionHistory = []; 
 
+// ==============================================================
+// 3. INIZIALIZZAZIONE APP
+// ==============================================================
 document.addEventListener('DOMContentLoaded', () => {
     let savedTheme = 'mocha';
     let storedDb = null;
@@ -274,6 +283,9 @@ function setTheme(themeName) {
     if(activeBtn) activeBtn.classList.add('active');
 }
 
+// ==============================================================
+// 4. PARSER HTML
+// ==============================================================
 document.getElementById('htmlInput').addEventListener('change', (e) => {
     const file = e.target.files[0];
     if(!file) return;
@@ -363,6 +375,9 @@ function startApp() {
     buildLessonGrid(); initQuiz();
 }
 
+// ==============================================================
+// 5. HELPER DATI
+// ==============================================================
 function shuffle(array) {
     let arr = [...array];
     for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
@@ -390,6 +405,9 @@ function getAvailablePool() {
     return [];
 }
 
+// ==============================================================
+// 6. LOGICA QUIZ
+// ==============================================================
 function initQuiz() {
     document.getElementById('finalScreen').classList.add('hidden');
     document.getElementById('quizScreen').classList.remove('hidden');
@@ -469,6 +487,9 @@ function toggleBookmark() {
 
 document.getElementById('btnNext').onclick = () => { if (currentIndex < currentQuiz.length - 1) { currentIndex++; renderQuestion(); } else { showFinalScreen(); } };
 
+// ==============================================================
+// 7. FINE TEST E CORIANDOLI
+// ==============================================================
 function fireConfetti() {
     const colors = ['#7c6af5', '#34d399', '#facc15', '#f87171', '#38bdf8'];
     for(let i=0; i<80; i++) {
@@ -476,7 +497,8 @@ function fireConfetti() {
         conf.className = 'confetti'; conf.style.left = Math.random() * 100 + 'vw';
         conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         conf.style.animationDuration = (Math.random() * 3 + 2) + 's'; conf.style.animationDelay = (Math.random() * 0.5) + 's';
-        document.body.appendChild(conf); setTimeout(() => conf.remove(), 5000); 
+        document.body.appendChild(conf); 
+        setTimeout(() => { if(conf.parentNode) conf.remove(); }, 5000); 
     }
 }
 
@@ -504,7 +526,11 @@ function saveTestToHistory() {
     try { localStorage.setItem(HISTORY_KEY, JSON.stringify(tests)); } catch(e){}
 }
 
-document.getElementById('btnStats').onclick = () => { document.getElementById('statsOverlay').classList.add('active'); renderDashboard(5); };
+// ==============================================================
+// 8. DASHBOARD STATISTICHE
+// ==============================================================
+document.getElementById('btnStats').onclick = openStats;
+function openStats() { document.getElementById('statsOverlay').classList.add('active'); renderDashboard(5); }
 function closeStats() { document.getElementById('statsOverlay').classList.remove('active'); }
 
 function renderDashboard(limit) {
@@ -521,20 +547,23 @@ function renderDashboard(limit) {
     let tests = allTests.slice(-limit); let tQs = 0, tScore = 0; tests.forEach(t => { tQs += t.total; tScore += t.score; });
     let avg = Math.round((tScore / tQs) * 100) || 0;
     document.getElementById('kAvg').textContent = avg + '%'; document.getElementById('kTests').textContent = tests.length; document.getElementById('kQs').textContent = tQs;
+    
     let trendHTML = '';
     tests.forEach((t, idx) => {
         let p = Math.round((t.score / t.total) * 100); let colorCls = p >= 80 ? 'good' : (p >= 60 ? 'ok' : 'bad');
         trendHTML += `<div class="bar-v-wrapper"><div class="bar-tooltip">${p}%</div><div class="bar-v ${colorCls}" style="height: ${p}%"></div><div class="bar-label">${idx+1}</div></div>`;
     });
     document.getElementById('trendChart').innerHTML = trendHTML;
+    
     let lessonErrors = {}; tests.forEach(t => { t.errors.forEach(err => { lessonErrors[err.lezione] = (lessonErrors[err.lezione] || 0) + 1; }); });
     let weakArr = Object.keys(lessonErrors).map(k => ({ lezione: k, count: lessonErrors[k] })); weakArr.sort((a,b) => b.count - a.count); let topWeak = weakArr.slice(0, 5); 
-    if (topWeak.length === 0) { document.getElementById('weakChart').innerHTML = "<div style='color:var(--green); font-weight:600;'>Nessun errore registrato in questi test! 🎉</div>";
+    if (topWeak.length === 0) { document.getElementById('weakChart').innerHTML = "<div style='color:var(--green); font-weight:600;'>Nessun errore registrato! 🎉</div>";
     } else {
         let maxErr = topWeak[0].count; let weakHTML = '';
         topWeak.forEach(w => { let pct = (w.count / maxErr) * 100; weakHTML += `<div class="bar-h-row"><div class="bar-h-label">L${w.lezione}</div><div class="bar-h-track"><div class="bar-h-fill" style="width:${pct}%"></div></div><div class="bar-h-val">${w.count}</div></div>`; });
         document.getElementById('weakChart').innerHTML = weakHTML;
     }
+    
     let histHTML = ''; let revTests = [...tests].reverse();
     revTests.forEach((t, idx) => {
         let p = Math.round((t.score / t.total) * 100); let color = p >= 80 ? 'var(--green)' : (p >= 60 ? 'var(--yellow)' : 'var(--red)');
@@ -549,88 +578,50 @@ function renderDashboard(limit) {
 }
 
 // ==============================================================
-// GESTIONE SEGNALIBRI OVERLAY
+// 9. GESTIONE SEGNALIBRI OVERLAY
 // ==============================================================
-function openBookmarks() {
-    document.getElementById('bookmarksOverlay').classList.add('active');
-    renderBookmarksList();
-}
-
-function closeBookmarks() {
-    document.getElementById('bookmarksOverlay').classList.remove('active');
-}
+function openBookmarks() { document.getElementById('bookmarksOverlay').classList.add('active'); renderBookmarksList(); }
+function closeBookmarks() { document.getElementById('bookmarksOverlay').classList.remove('active'); }
 
 function renderBookmarksList() {
-    const bks = getBookmarks();
-    const list = document.getElementById('bookmarksList');
-    list.innerHTML = '';
-    
-    if (bks.length === 0) {
-        list.innerHTML = `<div style="text-align:center; color:var(--subtext); margin-top:2rem;">Nessun segnalibro salvato.</div>`;
-        return;
-    }
+    const bks = getBookmarks(); const list = document.getElementById('bookmarksList'); list.innerHTML = '';
+    if (bks.length === 0) { list.innerHTML = `<div style="text-align:center; color:var(--subtext); margin-top:2rem;">Nessun segnalibro salvato.</div>`; return; }
     
     bks.forEach((bk, idx) => {
         let qObj = ALL_QUESTIONS.find(q => q.question === bk);
-        let correctText = "Risposta non trovata";
-        let lezione = "?";
-        if (qObj) {
-            let cOpt = qObj.options.find(o => o.is_correct);
-            if(cOpt) correctText = cOpt.text;
-            lezione = qObj.lezione;
-        }
+        let correctText = "Risposta non trovata"; let lezione = "?";
+        if (qObj) { let cOpt = qObj.options.find(o => o.is_correct); if(cOpt) correctText = cOpt.text; lezione = qObj.lezione; }
         
-        let div = document.createElement('div');
-        div.className = 'history-item';
-        div.style.display = 'flex'; div.style.flexDirection = 'column'; div.style.gap = '0.5rem';
+        let div = document.createElement('div'); div.className = 'history-item'; div.style.display = 'flex'; div.style.flexDirection = 'column'; div.style.gap = '0.5rem';
+        let headerRow = document.createElement('div'); headerRow.style.display = 'flex'; headerRow.style.justifyContent = 'space-between'; headerRow.style.alignItems = 'flex-start'; headerRow.style.gap = '1rem';
         
-        let headerRow = document.createElement('div');
-        headerRow.style.display = 'flex'; headerRow.style.justifyContent = 'space-between'; headerRow.style.alignItems = 'flex-start'; headerRow.style.gap = '1rem';
-        
-        let title = document.createElement('h4');
-        title.style.margin = '0'; title.style.fontSize = '0.95rem';
-        title.textContent = `${idx + 1}. ${bk}`;
-        
-        let btn = document.createElement('button');
-        btn.textContent = '✕ Elimina';
-        btn.style.background = 'rgba(248, 113, 113, 0.15)'; btn.style.color = 'var(--red)'; btn.style.border = '1px solid var(--red)';
-        btn.style.borderRadius = '6px'; btn.style.padding = '0.3rem 0.6rem'; btn.style.cursor = 'pointer'; btn.style.fontWeight = 'bold'; btn.style.fontSize = '0.75rem'; btn.style.flexShrink = '0';
+        let title = document.createElement('h4'); title.style.margin = '0'; title.style.fontSize = '0.95rem'; title.textContent = `${idx + 1}. ${bk}`;
+        let btn = document.createElement('button'); btn.textContent = '✕ Elimina'; btn.style.background = 'rgba(248, 113, 113, 0.15)'; btn.style.color = 'var(--red)'; btn.style.border = '1px solid var(--red)'; btn.style.borderRadius = '6px'; btn.style.padding = '0.3rem 0.6rem'; btn.style.cursor = 'pointer'; btn.style.fontWeight = 'bold'; btn.style.fontSize = '0.75rem'; btn.style.flexShrink = '0';
         btn.onclick = () => removeBookmarkFromList(bk);
         
         headerRow.appendChild(title); headerRow.appendChild(btn);
-        
-        let ansRow = document.createElement('div');
-        ansRow.className = 'h-row'; ansRow.style.marginTop = '0.5rem';
+        let ansRow = document.createElement('div'); ansRow.className = 'h-row'; ansRow.style.marginTop = '0.5rem';
         ansRow.innerHTML = `<span class="h-label">LEZIONE ${lezione} - RISPOSTA CORRETTA:</span><span style="color: var(--green); font-weight:600;">${correctText}</span>`;
-        
         div.appendChild(headerRow); div.appendChild(ansRow); list.appendChild(div);
     });
 }
 
 function removeBookmarkFromList(qText) {
-    let bks = getBookmarks();
-    bks = bks.filter(b => b !== qText);
-    saveBookmarks(bks);
-    renderBookmarksList();
-    if (appState.mode === 'bookmarks') {
-        updateRefineSettingsStats('bookmarks');
-        updatePoolBadges();
-    }
+    let bks = getBookmarks(); bks = bks.filter(b => b !== qText); saveBookmarks(bks); renderBookmarksList();
+    if (appState.mode === 'bookmarks') { updateRefineSettingsStats('bookmarks'); updatePoolBadges(); }
 }
 
+// ==============================================================
+// 10. IMPOSTAZIONI E SISTEMA
+// ==============================================================
 document.getElementById('btnSettings').onclick = () => { updateSettingsUI(); document.getElementById('settingsOverlay').classList.add('active'); };
 function closeSettings() { document.getElementById('settingsOverlay').classList.remove('active'); }
 
 function setMode(mode) {
     appState.mode = mode; document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active')); document.querySelector(`.mode-btn[data-mode="${mode}"]`).classList.add('active');
     document.getElementById('lessonSelector').classList.add('hidden'); document.getElementById('refineStats').classList.add('hidden'); document.getElementById('orderToggleGroup').classList.remove('hidden');
-    
     if (mode === 'select') document.getElementById('lessonSelector').classList.remove('hidden');
-    else if (mode === 'refine' || mode === 'bookmarks') { 
-        document.getElementById('refineStats').classList.remove('hidden'); 
-        document.getElementById('orderToggleGroup').classList.add('hidden'); 
-        updateRefineSettingsStats(mode); 
-    }
+    else if (mode === 'refine' || mode === 'bookmarks') { document.getElementById('refineStats').classList.remove('hidden'); document.getElementById('orderToggleGroup').classList.add('hidden'); updateRefineSettingsStats(mode); }
     updatePoolBadges();
 }
 
@@ -658,7 +649,7 @@ function updateRefineSettingsStats(mode) {
 }
 
 function resetErrors() { 
-    if (confirm("Attenzione: questo cancellerà TUTTA la tua Cronologia dei test e le Statistiche degli errori. I segnalibri verranno mantenuti. Sei sicuro?")) { 
+    if (confirm("Attenzione: cancellerà la Cronologia e le Statistiche degli errori. I segnalibri verranno mantenuti. Sei sicuro?")) { 
         try{localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(HISTORY_KEY);}catch(e){} 
         if(appState.mode === 'refine') updateRefineSettingsStats('refine'); 
         updatePoolBadges(); closeStats();
@@ -668,14 +659,11 @@ function resetErrors() {
 function changeNum(delta) { setNum(appState.numQs + delta); }
 function setNum(val) { 
     const size = getAvailablePool().length; let n = val; 
-    if (n < 1) n = 1; if (n >= size) n = size; 
-    appState.numQs = n; 
+    if (n < 1) n = 1; if (n >= size) n = size; appState.numQs = n; 
     document.getElementById('numQuestionsVal').textContent = (n === size) ? "Tutte" : n; 
     updatePresets(); 
 }
-function updatePoolBadges() { 
-    const size = getAvailablePool().length; document.getElementById('poolSizeBadge').textContent = `Disponibili: ${size}`; document.getElementById('btnApply').disabled = (size === 0); setNum(appState.numQs); 
-}
+function updatePoolBadges() { const size = getAvailablePool().length; document.getElementById('poolSizeBadge').textContent = `Disponibili: ${size}`; document.getElementById('btnApply').disabled = (size === 0); setNum(appState.numQs); }
 function updatePresets() { 
     const size = getAvailablePool().length; 
     document.querySelectorAll('.preset-btn:not(.theme-btn)').forEach(btn => { 
